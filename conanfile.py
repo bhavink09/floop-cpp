@@ -2,7 +2,9 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeDeps, CMakeToolchain, cmake_layout
 
 
-class TradingEngineCpp(ConanFile):
+class FloopCpp(ConanFile):
+    name = "floop"
+    version = "0.0.1"
     settings = "os", "compiler", "build_type", "arch"
 
     # Project configuration
