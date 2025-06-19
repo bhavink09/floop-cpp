@@ -10,3 +10,4 @@ Makefile
 *.cmake
 !CMakeLists.txt
 .cache/
+compile_commands.json

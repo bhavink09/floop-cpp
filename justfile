@@ -5,31 +5,26 @@ set shell := ["bash", "-uc"]
 default:
     @just --list
 
-compile-commands:
-  cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
-
-# Install Conan dependencies
-install:
-    conan install . --build=missing
 
 # Install dependencies for Debug build
-install-debug:
+conan-install-debug:
     conan install . --build=missing -s build_type=Debug
 
+compile-commands: conan-install-debug
+  cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --preset conan-debug
+  rm -rf compile_commands.json
+  ln -s build/Debug/compile_commands.json .
+
 # Install dependencies for Release build
-install-release:
+conan-install:
     conan install . --build=missing -s build_type=Release
 
-# Configure CMake project
-configure: install
-    cmake --preset conan-default
-
 # Configure for Debug build
-configure-debug: install-debug
+configure-debug: conan-install-debug
     cmake --preset conan-debug
 
 # Configure for Release build
-configure-release: install-release
+configure: conan-install
     cmake --preset conan-release
 
 # Build the project (Release)
@@ -60,3 +55,6 @@ setup-conan:
 # Format code (if you have clang-format)
 format:
     find src include tests -name "*.cpp" -o -name "*.hpp" -o -name "*.h" | xargs clang-format -i
+
+create:
+    conan create . --profile=default --build=missing -v

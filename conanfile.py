@@ -1,5 +1,7 @@
+import os
 from conan import ConanFile
-from conan.tools.cmake import CMakeDeps, CMakeToolchain, cmake_layout
+from conan.tools.cmake import CMakeDeps, CMakeToolchain, CMake, cmake_layout
+from conan.tools.files import copy
 
 
 class FloopCpp(ConanFile):
@@ -11,6 +13,10 @@ class FloopCpp(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
 
     default_options = {"shared": False, "fPIC": True}
+    exports_sources = "CMakeLists.txt", "src/*", "include/*"
+
+    def package_info(self):
+        self.cpp_info.libs = ["floop"]
 
     def requirements(self):
         # Boost for boost::asio
@@ -33,7 +39,17 @@ class FloopCpp(ConanFile):
         # Generate CMake toolchain
         tc = CMakeToolchain(self)
         tc.generator = "Ninja"
+        tc.variables["BUILD_EXAMPLES"] = "OFF"
         tc.generate()
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
+
+    def package(self):
+        cmake = CMake(self)
+        cmake.install()
 
     def configure(self):
         if self.settings.os == "Windows":
