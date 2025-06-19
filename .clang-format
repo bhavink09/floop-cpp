@@ -1,0 +1,6 @@
+---
+Language: Cpp
+# Other settings...
+BreakBeforeInheritanceComma: true
+BreakInheritanceList: BeforeComma
+AlwaysBreakTemplateDeclarations: Yes
